@@ -1,0 +1,37 @@
+﻿@model MovieCatalog.Models.Movie
+
+<div class="modal fade" id="delete-movie" tabindex="-1" role="dialog" aria-labelledby="deleteMovie" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="addContactLabel">@ViewData.Model.Name info</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        @ViewData.Model.Description
+                    </li>
+                    <li class="list-group-item">
+                        @ViewData.Model.ProducedDate
+                    </li>
+                    <li class="list-group-item">
+                        @ViewData.Model.Producer
+                    </li>
+                    <li class="list-group-item">
+                        <img src="@(ViewData.Model.Poster.StartsWith("http") ? ViewData.Model.Poster : 
+                            string.Format("/uploads/{0}", ViewData.Model.Poster))" 
+                             width="200" height="200" />
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+﻿@page
+@model MovieCatalog.Pages.Movie.MovieModel
+@{
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Movie.Name" class="control-label"></label>
+                <input asp-for="Movie.Name" class="form-control" />
+                <span asp-validation-for="Movie.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Movie.Description" class="control-label"></label>
+                <input asp-for="Movie.Description" class="form-control" />
+                <span asp-validation-for="Movie.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Movie.ProducedDate" class="control-label"></label>
+                <input asp-for="Movie.ProducedDate" class="form-control" />
+                <span asp-validation-for="Movie.ProducedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Movie.Producer" class="control-label"></label>
+                <input asp-for="Movie.Producer" class="form-control" />
+                <span asp-validation-for="Movie.Producer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Movie.PosterFile" class="control-label"></label>
+                <input asp-for="Movie.PosterFile" class="form-control" />
+                <span asp-validation-for="Movie.PosterFile" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="../Index">Back to List</a>
+</div>
