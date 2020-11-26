@@ -36,11 +36,19 @@ Catalog.prototype = {
             });
 
         this.modalPlaceholder.on("click", '[data-delete="modal"]', function () {
-            $.post(url, { movieId: id })
-                .done(function () {
-                    that.modalPlaceholder.find(".modal").modal("hide");
-                    that.closest("tr").remove();
-                });
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { movieId: id },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("RequestVerificationToken",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function () {
+                    that.modalPlaceholder.find('.modal').modal('hide');
+                    that.closest('tr').remove();
+                }
+            })
         });
     },
 
