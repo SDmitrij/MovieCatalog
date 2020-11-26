@@ -26,7 +26,6 @@ namespace MovieCatalog.Models
         [BindProperty]
         [Display(Name = "Poster")]
         [NotMapped]
-        [Required]
         public IFormFile PosterFile { get; set; }
         
         public string Poster { get; set; }
