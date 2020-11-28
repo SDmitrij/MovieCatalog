@@ -21,6 +21,7 @@ Catalog.prototype = {
                     var valid = newBody.find('[name="IsValid"]').val() == "True";
                     if (valid) {
                         that.modalPlaceholder.find(".modal").modal("hide");
+                        location.href = window.location.href;
                     }
                 });
         });
@@ -46,7 +47,7 @@ Catalog.prototype = {
                 },
                 success: function () {
                     that.modalPlaceholder.find('.modal').modal('hide');
-                    that.closest('tr').remove();
+                    location.href = window.location.href;
                 }
             })
         });

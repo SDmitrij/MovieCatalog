@@ -50,30 +50,40 @@ namespace MovieCatalog.Pages.Movie
         public IActionResult OnGetInfo(int movieId)
         {
             ViewData["ContentRoot"] = Path.Combine(_environment.ContentRootPath, "wwwroot", "uploads");
+            var movie = _interaction.GetMovie(movieId);
+            if (movie is null) return NotFound();
             return new PartialViewResult
             {
                 ViewName = "./_Partial/_MovieInfo",
-                ViewData = new ViewDataDictionary<Models.Movie>(ViewData, _interaction.GetMovie(movieId))
+                ViewData = new ViewDataDictionary<Models.Movie>(ViewData, movie)
             };
         }
 
         public IActionResult OnGetEditMovie(int movieId)
         {
             if (!User.Identity.IsAuthenticated) return new BadRequestResult();
+            var movie = _interaction.GetMovie(movieId);
+
+            if (movie is null) return NotFound();
+
             return new PartialViewResult
             {
                 ViewName = "./_Partial/_EditMovie",
-                ViewData = new ViewDataDictionary<Models.Movie>(ViewData, _interaction.GetMovie(movieId))
+                ViewData = new ViewDataDictionary<Models.Movie>(ViewData, movie)
             };
         }
 
         public IActionResult OnPostEditMovie(Models.Movie movie)
         {
             if (!User.Identity.IsAuthenticated) return new BadRequestResult();
+            if (_httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value != movie.UserId)
+                return new BadRequestResult();
+
             if (ModelState.IsValid)
             {
                 _interaction.EditMovie(movie);
             }
+
             return new PartialViewResult
             {
                 ViewName = "./_Partial/_EditMovie",
