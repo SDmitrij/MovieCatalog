@@ -48,10 +48,10 @@ namespace MovieCatalog.Pages.Movie
         }
 
         public IActionResult OnGetInfo(int movieId)
-        {
-            ViewData["ContentRoot"] = Path.Combine(_environment.ContentRootPath, "wwwroot", "uploads");
+        {         
             var movie = _interaction.GetMovie(movieId);
             if (movie is null) return NotFound();
+
             return new PartialViewResult
             {
                 ViewName = "./_Partial/_MovieInfo",

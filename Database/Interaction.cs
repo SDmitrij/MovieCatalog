@@ -37,7 +37,9 @@ namespace MovieCatalog.Database
 
         public void DeleteMovie(int movieId)
         {
-            _catalogContext.Movies.Remove(GetMovie(movieId));
+            var movie = GetMovie(movieId);
+            if (movie is null) return;
+            _catalogContext.Movies.Remove(movie);
             _catalogContext.SaveChanges();
         }
 
