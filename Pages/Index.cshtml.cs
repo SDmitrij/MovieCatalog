@@ -15,7 +15,7 @@ namespace MovieCatalog.Pages
         public int TotalPages => (int)Math.Ceiling(decimal.Divide(Count, PageSize));
         public bool ShowPrevious => CurrentPage > 1;
         public bool ShowNext => CurrentPage < TotalPages;
-        public IEnumerable<Models.Movie> Data { get; set; }
+        public List<Models.Movie> Movies { get; set; }
 
         public IndexModel(IInteraction interaction)
         {
@@ -24,7 +24,7 @@ namespace MovieCatalog.Pages
 
         public void OnGet()
         {
-            Data = _interaction.GetPaginatedMovies(CurrentPage, PageSize);
+            Movies = _interaction.GetPaginatedMovies(CurrentPage, PageSize);
             Count = _interaction.GetCount();              
         }
 

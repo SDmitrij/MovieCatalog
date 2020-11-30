@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using System;
 
 namespace MovieCatalog.Pages.Movie
 {
@@ -14,7 +15,8 @@ namespace MovieCatalog.Pages.Movie
         [BindProperty]
         public Models.Movie Movie { get; set; }
         
-        public MovieModel(IInteraction interaction, IHttpContextAccessor httpContext, IWebHostEnvironment environment)
+        public MovieModel(IInteraction interaction, IHttpContextAccessor httpContext, 
+            IWebHostEnvironment environment)
         {
             _interaction = interaction;
             _httpContext = httpContext;
@@ -23,24 +25,27 @@ namespace MovieCatalog.Pages.Movie
 
         public IActionResult OnGet()
         {
-            if (!User.Identity.IsAuthenticated) return new BadRequestResult();
+            if (!User.Identity.IsAuthenticated) return BadRequest();
             return Page();
         }
 
         public IActionResult OnPost()
         {
-            if (!User.Identity.IsAuthenticated) return new BadRequestResult();
+            if (!User.Identity.IsAuthenticated) return BadRequest();
             if (!ModelState.IsValid) return Page();
+            
+            var uniqueFileName = string.Format("{0}{1}",
+                Guid.NewGuid().ToString(), Movie.PosterFile.FileName);
 
             using (var fileStream = new FileStream(Path
-                .Combine(_environment.ContentRootPath, "wwwroot", "uploads", Movie.PosterFile.FileName),
+                .Combine(_environment.ContentRootPath, "wwwroot", "uploads", uniqueFileName),
                 FileMode.Create))
             {
                 Movie.PosterFile.CopyTo(fileStream);
             }
 
-            Movie.UserId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            Movie.Poster = Movie.PosterFile.FileName;
+            Movie.UserId = UserId;
+            Movie.Poster = uniqueFileName;
 
             _interaction.AddMovie(Movie);
 
@@ -61,7 +66,7 @@ namespace MovieCatalog.Pages.Movie
 
         public IActionResult OnGetEditMovie(int movieId)
         {
-            if (!User.Identity.IsAuthenticated) return new BadRequestResult();
+            if (!User.Identity.IsAuthenticated) return BadRequest();
             var movie = _interaction.GetMovie(movieId);
 
             if (movie is null) return NotFound();
@@ -75,9 +80,8 @@ namespace MovieCatalog.Pages.Movie
 
         public IActionResult OnPostEditMovie(Models.Movie movie)
         {
-            if (!User.Identity.IsAuthenticated) return new BadRequestResult();
-            if (_httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value != movie.UserId)
-                return new BadRequestResult();
+            if (!User.Identity.IsAuthenticated) return BadRequest();
+            if (UserId != movie.UserId) return BadRequest();
 
             if (ModelState.IsValid)
             {
@@ -93,7 +97,7 @@ namespace MovieCatalog.Pages.Movie
 
         public IActionResult OnGetDeleteMovie()
         {
-            if (!User.Identity.IsAuthenticated) return new BadRequestResult();
+            if (!User.Identity.IsAuthenticated) return BadRequest();
             return new PartialViewResult
             {
                 ViewName = "./_Partial/_DeleteMovie"
@@ -102,14 +106,22 @@ namespace MovieCatalog.Pages.Movie
 
         public IActionResult OnPostDeleteMovie(int movieId)
         {
-            if (!User.Identity.IsAuthenticated) return new BadRequestResult();
-            _interaction.DeleteMovie(movieId);
+            if (!User.Identity.IsAuthenticated) return BadRequest();
+
+            var movie = _interaction.GetMovie(movieId);
+
+            if (movie is null) return NotFound();
+            if (UserId != movie.UserId) return BadRequest();
+
+            _interaction.DeleteMovie(movie);
             return new OkResult();
         }
         #region private
         private readonly IInteraction _interaction;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IWebHostEnvironment _environment;
+        private string UserId => _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)
+            .Value;
         #endregion
     }
 }

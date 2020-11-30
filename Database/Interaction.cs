@@ -13,7 +13,7 @@ namespace MovieCatalog.Database
             _catalogContext = catalogContext;
         }
 
-        public List<Movie> GetPaginatedMovies(int currentPage, int pageSize = 10)
+        public List<Movie> GetPaginatedMovies(int currentPage, int pageSize)
         {
             return GetMovies().OrderBy(m => m.Id)
                 .Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
@@ -35,10 +35,8 @@ namespace MovieCatalog.Database
             _catalogContext.SaveChanges();
         }
 
-        public void DeleteMovie(int movieId)
+        public void DeleteMovie(Movie movie)
         {
-            var movie = GetMovie(movieId);
-            if (movie is null) return;
             _catalogContext.Movies.Remove(movie);
             _catalogContext.SaveChanges();
         }

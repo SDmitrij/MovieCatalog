@@ -7,7 +7,7 @@ namespace MovieCatalog.Database.Help
 {
     public static class Generate
     {
-        public static IEnumerable<Movie> GetFakeMovies(Auth context)
+        public static List<Movie> GetFakeMovies(Auth context)
         {
             var faker = new Bogus.Faker<Movie>("en");
             var userId = context.Users.FirstOrDefault().Id;
